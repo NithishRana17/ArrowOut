@@ -1,0 +1,33 @@
+Game Developer (Unity) – Assignment 
+The below assignment contains 2 tasks which are to be completed in Unity. 
+We expect you to complete this assignment within 5 days. However, in case you’d 
+require additional time or have concerns/queries, then please let us know. :) 
+Once completed – please share it with us via 1 video, explaining what you did 
+[along with scripts], unity file is a plus. Keep it brief!  
+1.​ Create a Prototype of the game below:  
+ARROW OUT 
+➢​ Create a simple level based game flow system with the following: 
+○​ Levels: 
+■​ Create 3+ levels for the prototype! 
+○​ Game Mechanic: 
+■​ Click the arrow: 
+●​  If the path is clear, the arrow will be cleared. 
+●​  If the path is not clear, the arrow will be shown in red 
+and will stay on its original spot . 
+■​ Grid system: 
+●​ Click to show grid lines of the stage. 
+●​ When not on, a dotted pattern will show on the empty 
+spots and behind every cleared arrow. 
+■​ Lives 
+●​ Player has 3 lives per level 
+●​ 1 Wrong Move = 1 live 
+●​ When all 3 lives are consumed, the level is failed 
+■​ Basic Game End Screen: 
+●​ Win screen 
+●​ Lose screen 
+2.​ Implement Ads in the prototype you created: 
+➢​ Every screen should contain 1 Banner Ad either on the top or on the bottom 
+of the screen. 
+➢​ Implement Interstitial Ad, which triggers after every level - win / loss both. 
+
+--- PAGE BREAK ---
