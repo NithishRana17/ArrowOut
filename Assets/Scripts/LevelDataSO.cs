@@ -12,7 +12,7 @@ public class LevelDataSO : ScriptableObject
     public int levelNumber = 1;
     
     [Tooltip("Level name/description")]
-    public string levelName = "New Level";
+    public string levelName = "Level 1";
     
     [Header("Grid Settings")]
     [Tooltip("Size of the grid (width x height)")]

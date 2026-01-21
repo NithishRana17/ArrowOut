@@ -10,13 +10,7 @@ public class MazeManager : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool enableDebugLog = false;
     
-    [Header("Sprites - Arrow Heads")]
-    [SerializeField] private Sprite upArrowStart;
-    [SerializeField] private Sprite downArrowStart;
-    [SerializeField] private Sprite leftArrowStart;
-    [SerializeField] private Sprite rightArrowStart;
-    
-    [Header("Sprites - Dot")]
+    [Header("Sprites")]
     [SerializeField] private Sprite underArrowDot;
     
     [Header("Settings")]
@@ -41,6 +35,7 @@ public class MazeManager : MonoBehaviour
     private int currentLives = 3;
     private int maxLives = 3;
     private bool isGameActive = true; // Disable input when false
+    private bool isDirectionGuideVisible = false; // Track guide line visibility
     
     public static MazeManager Instance { get; private set; }
     public bool IsGameActive => isGameActive;
@@ -119,6 +114,9 @@ public class MazeManager : MonoBehaviour
     
     private void LoadCurrentLevel()
     {
+        // Reset direction guide state for new level
+        isDirectionGuideVisible = false;
+        
         if (currentLevelIndex >= 0 && currentLevelIndex < allLevels.Length)
         {
             LevelDataSO levelData = allLevels[currentLevelIndex];
@@ -200,7 +198,6 @@ public class MazeManager : MonoBehaviour
         Arrow arrow = arrowObj.AddComponent<Arrow>();
         arrow.Initialize(arrowPath.path, arrowPath.headDirection, this);
         
-        arrow.SetHeadSprite(GetHeadSprite(arrowPath.headDirection));
         arrow.SetSpriteScale(spriteScale);
         arrow.SetLineWidth(lineWidth);
         arrow.SetLineColor(lineColor);
@@ -225,23 +222,13 @@ public class MazeManager : MonoBehaviour
         
         SpriteRenderer sr = dot.AddComponent<SpriteRenderer>();
         sr.sprite = underArrowDot;
-        sr.sortingOrder = -1;
+        sr.sortingOrder = 1; // Above background
         sr.color = new Color(0.7f, 0.7f, 0.7f, 0.5f);
         
         return dot;
     }
     
-    private Sprite GetHeadSprite(Direction dir)
-    {
-        switch (dir)
-        {
-            case Direction.Up: return upArrowStart;
-            case Direction.Down: return downArrowStart;
-            case Direction.Left: return leftArrowStart;
-            case Direction.Right: return rightArrowStart;
-            default: return upArrowStart;
-        }
-    }
+
     
     public Vector3 GridToWorld(Vector2Int gridPos)
     {
@@ -303,4 +290,28 @@ public class MazeManager : MonoBehaviour
         PlayerPrefs.Save();
         if (enableDebugLog) Debug.Log("Progress reset!");
     }
+    
+    /// <summary>
+    /// Toggle direction guide lines on all arrows
+    /// </summary>
+    public void ToggleDirectionGuides()
+    {
+        isDirectionGuideVisible = !isDirectionGuideVisible;
+        
+        foreach (var arrow in activeArrows)
+        {
+            if (arrow != null && !arrow.IsCleared && !arrow.IsMoving)
+            {
+                arrow.SetDirectionGuideVisible(isDirectionGuideVisible);
+            }
+        }
+        
+        if (enableDebugLog) Debug.Log($"Direction guides: {(isDirectionGuideVisible ? "ON" : "OFF")}");
+    }
+    
+    /// <summary>
+    /// Get current state of direction guides
+    /// </summary>
+    public bool IsDirectionGuideVisible => isDirectionGuideVisible;
 }
+

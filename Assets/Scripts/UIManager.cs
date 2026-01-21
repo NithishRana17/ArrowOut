@@ -14,6 +14,8 @@ public class UIManager : MonoBehaviour
     [Header("HUD Elements")]
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private List<Image> lifeIcons = new List<Image>();
+    [SerializeField] private Button showGuidesButton;
+    [SerializeField] private TextMeshProUGUI guidesButtonText;
     
     [Header("Win Screen")]
     [SerializeField] private GameObject winScreenPanel;
@@ -81,6 +83,27 @@ public class UIManager : MonoBehaviour
         {
             loseMenuButton.onClick.AddListener(OnMenuClicked);
         }
+        
+        // Guide button
+        if (showGuidesButton != null)
+        {
+            showGuidesButton.onClick.AddListener(OnShowGuidesClicked);
+        }
+    }
+    
+    private void OnShowGuidesClicked()
+    {
+        MazeManager.Instance?.ToggleDirectionGuides();
+        UpdateGuidesButtonText();
+    }
+    
+    private void UpdateGuidesButtonText()
+    {
+        if (guidesButtonText != null && MazeManager.Instance != null)
+        {
+            bool isOn = MazeManager.Instance.IsDirectionGuideVisible;
+            guidesButtonText.text = isOn ? "Hide Guides" : "Show Guides";
+        }
     }
     
     private void OnNextLevelClicked()
@@ -147,6 +170,12 @@ public class UIManager : MonoBehaviour
                 nextLevelButton.gameObject.SetActive(hasNextLevel);
             }
         }
+        
+        // Hide guides button when level ends
+        if (showGuidesButton != null)
+        {
+            showGuidesButton.gameObject.SetActive(false);
+        }
     }
     
     public void ShowLoseScreen()
@@ -154,6 +183,12 @@ public class UIManager : MonoBehaviour
         if (loseScreenPanel != null)
         {
             loseScreenPanel.SetActive(true);
+        }
+        
+        // Hide guides button when level ends
+        if (showGuidesButton != null)
+        {
+            showGuidesButton.gameObject.SetActive(false);
         }
     }
     
@@ -166,6 +201,18 @@ public class UIManager : MonoBehaviour
         if (loseScreenPanel != null)
         {
             loseScreenPanel.SetActive(false);
+        }
+        
+        // Show guides button when playing
+        if (showGuidesButton != null)
+        {
+            showGuidesButton.gameObject.SetActive(true);
+        }
+        
+        // Reset button text
+        if (guidesButtonText != null)
+        {
+            guidesButtonText.text = "Show Guides";
         }
     }
 }

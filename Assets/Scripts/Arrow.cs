@@ -50,6 +50,10 @@ public class Arrow : MonoBehaviour
     // Cached colliders
     private Collider2D[] cachedColliders;
     
+    // Direction guide line
+    private LineRenderer directionGuide;
+    private bool isGuideVisible = false;
+    
     public bool IsMoving => isMoving;
     public bool IsCleared => isCleared;
     
@@ -487,6 +491,9 @@ public class Arrow : MonoBehaviour
         if (headMeshRenderer != null) headMeshRenderer.enabled = false;
         if (bodyLineRenderer != null) bodyLineRenderer.positionCount = 0;
         
+        // Hide direction guide when arrow is cleared
+        HideDirectionGuide();
+        
         mazeManager?.OnArrowCleared(this);
     }
     
@@ -729,4 +736,80 @@ public class Arrow : MonoBehaviour
             headMesh.colors = origColors;
         }
     }
+    
+    #region Direction Guide
+    
+    /// <summary>
+    /// Shows a gray guide line from arrow head indicating movement direction
+    /// </summary>
+    public void ShowDirectionGuide()
+    {
+        if (isCleared || isMoving) return;
+        
+        // Create guide line if needed
+        if (directionGuide == null)
+        {
+            GameObject guideObj = new GameObject("DirectionGuide");
+            guideObj.transform.SetParent(transform);
+            directionGuide = guideObj.AddComponent<LineRenderer>();
+            
+            // Material setup - use Sprites/Default for 2D visibility
+            Material mat = new Material(Shader.Find("Sprites/Default"));
+            mat.color = Color.gray;
+            directionGuide.material = mat;
+            directionGuide.sortingOrder = 5;
+            directionGuide.positionCount = 2;
+            directionGuide.useWorldSpace = true; // Important for proper positioning
+        }
+        
+        // Get head position (last waypoint)
+        Vector3 headPos = waypoints[waypoints.Count - 1];
+        Vector3 dir = GetDirectionVector(headDirection);
+        
+        // Calculate end point - extend all the way to edge of screen
+        float maxDistance = 20f;
+        Vector3 endPos = headPos + dir * maxDistance;
+        
+        // Set line positions - start exactly from head
+        directionGuide.SetPosition(0, headPos);
+        directionGuide.SetPosition(1, endPos);
+        
+        // Style: light gray, thin line
+        Color guideColor = new Color(0.6f, 0.6f, 0.6f, 0.7f); // Light gray
+        directionGuide.startColor = guideColor;
+        directionGuide.endColor = new Color(0.7f, 0.7f, 0.7f, 0.3f); // Fade out
+        directionGuide.startWidth = 0.04f;
+        directionGuide.endWidth = 0.02f;
+        
+        directionGuide.enabled = true;
+        isGuideVisible = true;
+        
+        if (enableDebugLog) Debug.Log($"Guide shown from {headPos} to {endPos}");
+    }
+    
+    /// <summary>
+    /// Hides the direction guide line
+    /// </summary>
+    public void HideDirectionGuide()
+    {
+        if (directionGuide != null)
+        {
+            directionGuide.enabled = false;
+        }
+        isGuideVisible = false;
+    }
+    
+    /// <summary>
+    /// Toggle direction guide visibility
+    /// </summary>
+    public void SetDirectionGuideVisible(bool visible)
+    {
+        if (visible)
+            ShowDirectionGuide();
+        else
+            HideDirectionGuide();
+    }
+    
+    #endregion
 }
+
